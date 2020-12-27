@@ -6,7 +6,7 @@ import com.bit2021.emaillist.vo.EmaillistVo;
 
 public class EmaillistRepositoryTest {
 	public static void main(String[] args) {
-		//testInsert();
+		testInsert();
 		testSelect();
 		
 	}
