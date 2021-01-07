@@ -1,10 +1,9 @@
-<%@page import="com.bit2021.guestbook.repository.GuestbookRepository"%>
 <%@page import="com.bit2021.guestbook.vo.GuestbookVo"%>
 <%@page import="java.util.List"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%
-	List<GuestbookVo> list = new GuestbookRepository().findAll();
+	List<GuestbookVo> list = (List<GuestbookVo>)request.getAttribute("list");
 %>
 <html>
 <head>
@@ -32,13 +31,13 @@
 	%>
 	<table width=510 border=1>
 		<tr>
-			<td><%=vo.getNo() %></td>
-			<td><%=vo.getName() %></td>
-			<td><%=vo.getRegDate() %></td>
+			<td>[<%=vo.getNo()%>]</td>
+			<td><%=vo.getName()%></td>
+			<td><%=vo.getRegDate()%></td>
 			<td><a href="deleteform.jsp">삭제</a></td>
 		</tr>
 		<tr>
-			<td colspan=4><%=vo.getMessage() %></td>
+			<td colspan=4><%=vo.getMessage()%></td>
 		</tr>
 	</table>
 	<%
