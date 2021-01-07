@@ -11,6 +11,44 @@ import java.util.List;
 import com.bit2021.guestbook.vo.GuestbookVo;
 
 public class GuestbookRepository {
+	public boolean delete(Long no, String password) {
+		boolean result = false;
+		Connection connection = null;
+		PreparedStatement pstmt = null;
+		
+		try {
+			//연결하기
+			connection = getConnection();
+			
+			// sql 준비
+			String sql = "delete from guestbook where no = ? and password = ?";
+			pstmt = connection.prepareStatement(sql);
+			
+			// 바인딩
+			pstmt.setLong(1, no);
+			pstmt.setString(2, password);
+			
+			// sql 실행
+			int count = pstmt.executeUpdate();
+			result = (count == 1);
+			
+		} catch (SQLException e) {
+			System.out.println("error : " + e);
+		} finally {
+			try {
+				if (pstmt != null) {
+					pstmt.close();
+				}
+				if (connection != null) {
+					connection.close();
+				}
+
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		return result;
+	}
 	public boolean insert(GuestbookVo vo){
 		boolean result = false;
 		Connection connection = null;
@@ -25,9 +63,9 @@ public class GuestbookRepository {
 			pstmt = connection.prepareStatement(sql);
 			
 			// 바인딩
-			pstmt.setString(0, vo.getName());
-			pstmt.setString(1, vo.getPassword());
-			pstmt.setString(2, vo.getMessage());
+			pstmt.setString(1, vo.getName());
+			pstmt.setString(2, vo.getPassword());
+			pstmt.setString(3, vo.getMessage());
 			
 			// sql 실행
 			int count = pstmt.executeUpdate();
