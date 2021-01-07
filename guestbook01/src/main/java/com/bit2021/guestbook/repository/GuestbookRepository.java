@@ -75,7 +75,7 @@ public class GuestbookRepository {
 			stmt = connection.createStatement();
 
 			// sql 실행
-			String sql = "select no, name, message, reg_date from guestbook order by no desc";
+			String sql = "select no, name, message, date_format(reg_date, '%Y-%m-%d %h:%i:%s') from guestbook order by no desc";
 			rs = stmt.executeQuery(sql);
 			
 			while(rs.next()) {

@@ -2,9 +2,9 @@ package com.bit2021.guestbook.repository;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,36 +14,31 @@ public class GuestbookRepository {
 	public boolean insert(GuestbookVo vo){
 		boolean result = false;
 		Connection connection = null;
-		Statement stmt = null;
+		PreparedStatement pstmt = null;
 		
 		try {
-			// JDBC driver
-			Class.forName("org.mariadb.jdbc.Driver");
+			//연결하기
+			connection = getConnection();
 			
-			// connection
-			String url = "jdbc:mysql://127.0.0.1:3306/webdb?characterEncoding=utf8";
-			connection = DriverManager.getConnection(url, "webdb", "webdb");
+			// sql 준비
+			String sql = "insert into guestbook value(null, ?, ?, ?, now())";
+			pstmt = connection.prepareStatement(sql);
 			
-			// statement
-			stmt = connection.createStatement();
+			// 바인딩
+			pstmt.setString(0, vo.getName());
+			pstmt.setString(1, vo.getPassword());
+			pstmt.setString(2, vo.getMessage());
 			
-			// sql실행
-			String sql = "insert into guestbook value(null, '" +
-					vo.getName() + "', '" + 
-					vo.getPassword() + "', '" + 
-					vo.getMessage() + "', now())";
-			int count = stmt.executeUpdate(sql);
-			
+			// sql 실행
+			int count = pstmt.executeUpdate();
 			result = (count == 1);
 			
-		} catch (ClassNotFoundException e) {
-			System.out.println("드라이버 로딩 실패");
 		} catch (SQLException e) {
 			System.out.println("error : " + e);
 		} finally {
 			try {
-				if (stmt != null) {
-					stmt.close();
+				if (pstmt != null) {
+					pstmt.close();
 				}
 				if (connection != null) {
 					connection.close();
@@ -60,23 +55,21 @@ public class GuestbookRepository {
 		ArrayList<GuestbookVo> result = new ArrayList<>();
 		
 		Connection connection = null;
-		Statement stmt = null;
+		PreparedStatement pstmt = null;
 		ResultSet rs = null;
 
 		try {
-			// JDBC Driver
-			Class.forName("org.mariadb.jdbc.Driver");
-
-			// connection
-			String url = "jdbc:mysql://127.0.0.1:3306/webdb?characterEncoding=utf8";
-			connection = DriverManager.getConnection(url, "webdb", "webdb");
-
-			// statement 객체 생성
-			stmt = connection.createStatement();
-
+			// 연결하기
+			connection = getConnection();
+			
+			// sql 준비
+			String sql = "select no, name, message, date_format(reg_date, '%Y-%m-%d %h:%i:%s') from guestbook order by no desc";
+			pstmt = connection.prepareStatement(sql);
+			
+			// 바인딩
+			
 			// sql 실행
-			String sql = "select no, name, message, reg_date from guestbook order by no desc";
-			rs = stmt.executeQuery(sql);
+			rs = pstmt.executeQuery();
 			
 			while(rs.next()) {
 				Long no = rs.getLong(1);
@@ -93,14 +86,12 @@ public class GuestbookRepository {
 				result.add(vo);
 			}
 
-		} catch(ClassNotFoundException e) {
-			System.out.println("드라이버 로딩 실패");
 		} catch(SQLException e) {
 			System.out.println("에러 " + e);
 		} finally {
 			try {
-				if (stmt != null) {
-					stmt.close();
+				if (pstmt != null) {
+					pstmt.close();
 				}
 				if (connection != null) {
 					connection.close();
@@ -110,5 +101,22 @@ public class GuestbookRepository {
 			}
 		}
 		return result;
+	}
+	
+	private Connection getConnection() throws SQLException {
+		Connection connection = null;
+		
+		try {
+			// JDBC Driver
+			Class.forName("org.mariadb.jdbc.Driver");
+
+			// connection
+			String url = "jdbc:mysql://127.0.0.1:3306/webdb?characterEncoding=utf8";
+			connection = DriverManager.getConnection(url, "webdb", "webdb");
+		} catch (ClassNotFoundException e) {
+			System.out.println("드라이버 로딩 실패");
+		}
+		
+		return connection;
 	}
 }
