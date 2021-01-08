@@ -4,7 +4,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%
-List<EmaillistVo> list = new EmaillistRepository().findAll();
+	List<EmaillistVo> list = (List<EmaillistVo>)request.getAttribute("list");
 %>
 <!DOCTYPE html>
 <html>
@@ -17,7 +17,7 @@ List<EmaillistVo> list = new EmaillistRepository().findAll();
 	<p>입력한 정보 내역입니다.</p>
 	<!-- 메일정보 리스트 -->
 	<%
-	for (EmaillistVo vo : list) {
+		for (EmaillistVo vo : list) {
 	%>
 	<table border="1" cellpadding="5" cellspacing="2">
 		<tr>
@@ -35,10 +35,10 @@ List<EmaillistVo> list = new EmaillistRepository().findAll();
 	</table>
 	<br>
 	<%
-	}
+		}
 	%>
 	<p>
-		<a href='form.jsp'>추가메일 등록</a>
+		<a href='<%=request.getContextPath() %>/el?a=form'>추가메일 등록</a>
 	</p>
 	<br>
 </body>

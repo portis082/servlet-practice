@@ -9,4 +9,14 @@
     <welcome-file>default.htm</welcome-file>
     <welcome-file>default.jsp</welcome-file>
   </welcome-file-list>
+  <servlet>
+    <description></description>
+    <display-name>EmaillistController</display-name>
+    <servlet-name>EmaillistController</servlet-name>
+    <servlet-class>com.bit2021.emillist.controller.EmaillistController</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>EmaillistController</servlet-name>
+    <url-pattern>/el</url-pattern>
+  </servlet-mapping>
 </web-app>

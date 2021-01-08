@@ -2,6 +2,7 @@ package com.bit2021.emaillist.repository;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -14,36 +15,30 @@ public class EmaillistRepository {
 	public boolean insert(EmaillistVo vo) {
 		boolean result = false;
 		Connection connection = null;
-		Statement stmt = null;
+		PreparedStatement pstmt = null;
 
 		try {
-			// JDBC Driver
-			Class.forName("org.mariadb.jdbc.Driver");
+			connection = getConnection();
 
-			// connection
-			String url = "jdbc:mysql://127.0.0.1:3306/webdb?characterEncoding=utf8";
-			connection = DriverManager.getConnection(url, "webdb", "webdb");
-
-			// statement 객체 생성
-			stmt = connection.createStatement();
-
+			// sql 준비
+			String sql = "INSERT INTO emaillist VALUES(null, ?, ?, ?)";
+			pstmt = connection.prepareStatement(sql);
+			
+			//바인딩
+			pstmt.setString(1, vo.getFirstName());
+			pstmt.setString(2, vo.getLastName());
+			pstmt.setString(3, vo.getEmail());
+			
 			// sql 실행
-			String sql =
-					"INSERT INTO emaillist VALUES(null, '" +
-							vo.getFirstName() + "', '"+
-							vo.getLastName() +"', '"+
-							vo.getEmail() +"')";
-			int count = stmt.executeUpdate(sql);
+			int count = pstmt.executeUpdate();
 			result = (count == 1);
 
-		} catch(ClassNotFoundException e) {
-			System.out.println("드라이버 로딩 실패");
 		} catch(SQLException e) {
 			System.out.println("에러 " + e);
 		} finally {
 			try {
-				if (stmt != null) {
-					stmt.close();
+				if (pstmt != null) {
+					pstmt.close();
 				}
 				if (connection != null) {
 					connection.close();
@@ -59,23 +54,20 @@ public class EmaillistRepository {
 		ArrayList<EmaillistVo> result = new ArrayList<>();
 		
 		Connection connection = null;
-		Statement stmt = null;
+		PreparedStatement pstmt = null;
 		ResultSet rs = null;
 
 		try {
-			// JDBC Driver
-			Class.forName("org.mariadb.jdbc.Driver");
-
-			// connection
-			String url = "jdbc:mysql://127.0.0.1:3306/webdb?characterEncoding=utf8";
-			connection = DriverManager.getConnection(url, "webdb", "webdb");
-
-			// statement 객체 생성
-			stmt = connection.createStatement();
-
+			connection = getConnection();
+			
 			// sql 실행
 			String sql = "select no, first_name, last_name, email from emaillist order by no desc";
-			rs = stmt.executeQuery(sql);
+			pstmt = connection.prepareStatement(sql);
+			
+			// 바인딩
+			
+			// sql 실행
+			rs = pstmt.executeQuery();
 			
 			while(rs.next()) {
 				Long no = rs.getLong(1);
@@ -92,14 +84,12 @@ public class EmaillistRepository {
 				result.add(vo);
 			}
 
-		} catch(ClassNotFoundException e) {
-			System.out.println("드라이버 로딩 실패");
 		} catch(SQLException e) {
 			System.out.println("에러 " + e);
 		} finally {
 			try {
-				if (stmt != null) {
-					stmt.close();
+				if (pstmt != null) {
+					pstmt.close();
 				}
 				if (connection != null) {
 					connection.close();
@@ -110,5 +100,19 @@ public class EmaillistRepository {
 		}
 		return result;
 	}
+	
+	private Connection getConnection() throws SQLException {
+		Connection connection = null;
+		try {
+			// JDBC Driver
+			Class.forName("org.mariadb.jdbc.Driver");
 
+			// connection
+			String url = "jdbc:mysql://127.0.0.1:3306/webdb?characterEncoding=utf8";
+			connection = DriverManager.getConnection(url, "webdb", "webdb");
+		} catch (ClassNotFoundException e) {
+			System.out.println("드라이버 로딩 실패");
+		}
+		return connection;
+	}
 }
