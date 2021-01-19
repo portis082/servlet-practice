@@ -57,5 +57,6 @@
 		<module>guestbook01</module>
 		<module>emaillist02</module>
 		<module>guestbook02</module>
+		<module>emaillist03</module>
 	</modules>
 </project>
