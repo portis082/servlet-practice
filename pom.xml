@@ -59,5 +59,6 @@
 		<module>guestbook02</module>
 		<module>emaillist03</module>
 		<module>logex</module>
+		<module>aoptest</module>
 	</modules>
 </project>
